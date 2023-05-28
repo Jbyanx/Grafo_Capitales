@@ -4,6 +4,7 @@
  */
 package data;
 
+import algorithms.arista;
 import java.util.ArrayList;
 
 /**
@@ -79,5 +80,41 @@ public class GrafoImplementacion<V, A> implements Grafo<V, A> {
         }
         return con;
     }
-    
+
+    public ArrayList<Arista> obtAristas(int ciudadPos) {
+        if (ciudadPos >= 0 && ciudadPos < vertices.size()) {
+            return vertices.get(ciudadPos).getAristas();
+        } else {
+            return new ArrayList<>(); // Retorna una lista vacía si la posición de la ciudad es inválida
+        }
+    }
+     
+    public ArrayList<Double> tiemposHaciaOtrasCiudades(int ciudadPos) {
+        ArrayList<Double> tiempos = new ArrayList<>();
+
+        if (ciudadPos >= 0 && ciudadPos < vertices.size()) {
+            Vertice ciudad = vertices.get(ciudadPos);
+            ArrayList<Arista<V, arista>> aristas = ciudad.getAristas();
+
+            for (Vertice vertice : vertices) {
+                if (!vertice.equals(ciudad)) {
+                    double tiempo = Double.POSITIVE_INFINITY; // Inicialmente, tiempo es infinito
+
+                    for (Arista<V, arista> arista : aristas) {
+                        if (arista.getSucesor().equals(vertice.getVertice())) {
+                            tiempo = arista.getCosto().getTiempo(); // Obtener el tiempo de la arista
+                            break;
+                        }
+                    }
+
+                    tiempos.add(tiempo);
+                }
+            }
+        }
+
+        return tiempos;
+    }
+
+
+
 }

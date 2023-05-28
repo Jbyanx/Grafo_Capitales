@@ -5,8 +5,10 @@
 package GUI;
 
 import algorithms.Floyd;
+import data.Arista;
 import data.Grafo;
 import datos.GrafoDeCiudades;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -30,9 +32,9 @@ public class Main {
         
         do{
             op = Integer.parseInt(JOptionPane.showInputDialog("Bienvenido\n"
-                    + "1.Consultar los datos de una ciudad\n"
+                    + "1.$Consultar los datos de una ciudad$\n"//excelente
                     + "2.$Costo y Ruta minima entre dos ciudades$\n"
-                    + "3.Dada una ciudad decir los Tiempos hacia las demas ciudades\n"
+                    + "3.$Dada una ciudad decir los Tiempos hacia las demas ciudades$\n"
                     + "4.$Dada una ciudad hasta donde se puede llegar$\n"//excelente
                     + "5.Distancia Mas larga entre dos ciudades\n"
                     + "6.$Aislar ciudad por daño en el aeropuerto$\n"//excelente
@@ -45,7 +47,18 @@ public class Main {
                     JOptionPane.showMessageDialog(null,"Adios! vuelva pronto...");
                     break;
                 case 1:
-                    
+                    int ciudadPos = Integer.parseInt(JOptionPane.showInputDialog("Digite la posición de la ciudad a consultar: "));
+                    ArrayList<Arista> aristas = g.getGrafodeaviones().obtAristas(ciudadPos);
+
+                    JTextArea jTextArea = new JTextArea(10, 30);
+                    jTextArea.setText("Aristas de la ciudad en la posición " + ciudadPos + ":\n");
+
+                    for (Arista arista : aristas) {
+                        jTextArea.append(arista.toString() + "\n");
+                    }
+
+                    JScrollPane scrollPane = new JScrollPane(jTextArea);
+                    JOptionPane.showMessageDialog(null, scrollPane, "Datos de la ciudad", JOptionPane.INFORMATION_MESSAGE);
                     break;
                 case 2:
                     vi = Integer.parseInt(JOptionPane.showInputDialog("Digite la posicion de la ciudad a consultar su costo y ruta minima "));
@@ -76,13 +89,39 @@ public class Main {
                         j1.append(c);
                     }
                     
-                    JScrollPane scrollPane = new JScrollPane(j1);
+                    scrollPane = new JScrollPane(j1);
                     
                     JOptionPane.showMessageDialog(null, scrollPane, "Costo y ruta minima", JOptionPane.INFORMATION_MESSAGE);
                     break;
                 case 3:
-                    
+                    vi = Integer.parseInt(JOptionPane.showInputDialog("Digite la posición de la ciudad para consultar los tiempos hacia las demás ciudades: "));
+
+                    ArrayList<Double> tiempos = g.getGrafodeaviones().tiemposHaciaOtrasCiudades(vi);
+
+                    JTextArea j2 = new JTextArea(10, 30);
+                    j2.setText("Tiempos hacia las demás ciudades desde la ciudad en la posición " + vi + ":\n");
+
+                    if (tiempos.isEmpty()) {
+                        j2.append("No hay ciudades disponibles.");
+                    } else {
+                        for (int i = 0; i < tiempos.size(); i++) {
+                            double tiempo = tiempos.get(i);
+
+                            if (tiempo == Double.POSITIVE_INFINITY) {
+                                j2.append("No hay ruta hacia la ciudad en la posición " + i);
+                            } else {
+                                j2.append("Ciudad en la posición " + i + ": " + tiempo + " horas");
+                            }
+
+                            j2.append("\n");
+                        }
+                    }
+
+                    JScrollPane scrollPane2 = new JScrollPane(j2);
+
+                    JOptionPane.showMessageDialog(null, scrollPane2, "Tiempos hacia las demás ciudades", JOptionPane.INFORMATION_MESSAGE);
                     break;
+
                 case 4:
                     vi = Integer.parseInt(JOptionPane.showInputDialog("Digite la posicion de la ciudad a consultar su maximo recorrido"));
                     c = g.profundidad(g, vi);
